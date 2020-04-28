@@ -3,12 +3,11 @@ from wtforms import PasswordField, BooleanField, SubmitField, StringField, TextA
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired
 
-
+# классы форм
 class LoginForm(FlaskForm):
     email = EmailField('Введите почту', validators=[DataRequired()])
     password = PasswordField('Введите пароль', validators=[DataRequired()])
     remember_me = BooleanField('Запомнить меня')
-
     submit = SubmitField('Войти')
 
 

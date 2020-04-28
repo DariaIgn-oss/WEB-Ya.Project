@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1 align="center">Займёмся заказиком?</h1>
+<div>
+    <form class="basket_form" method="post">
+        <div>
+            <input type="name" class="form-control" id="name" placeholder="Введите имя" name="name">
+            <input type="surname" class="form-control" id="surname" placeholder="Введите фамилию" name="surname">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Введите номер телефона по примеру: 8-(***)-***-*-***</label>
+            <div> <input type="text" class="input-medium bfh-phone"  placeholder="Введите телефон"> </div>
+            <small class="form-text text-muted">Так курьер сможет с вами связаться.</small>
+        </div>
+        <div class="form-group">
+            <label for="classSelect">В каком магазина Эдельвейс будем покупать продукты?</label>
+            <select class="form-control" id="educationSelect" name="education">
+                {% set addresses = ["Авангардная, 171 б", "Адоратского, 11А", "Адоратского, 12",
+                                    "Амирхана, 97", "Восстания, 56", "Гаврилова, 30", "Гвардейская, 40",
+                                    "Главная, 69", "Зайцева, 10", "Зорге, 48"] %}
+                {% for address in addresses %}
+                <option>{{ address }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Теперь укажите адресс, по которому нужно доставить заказ</label>
+            <div> <input type="text" class="input-medium bfh-phone"  placeholder="Введите адресс"> </div>
+            <small class="form-text text-muted">Пожалуйста, не забудьте указать этаж и квартиру.</small>
+        </div>
+        <div class="form-group">
+            <label for="about">Перечислите нужные вам продукты или же предпочтения к блюду, которое приготовит для вас
+                курьер (примерную цену всех ингридиентов, вкусовые предпочтения)</label>
+            <textarea class="form-control" id="about" rows="3" name="about"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Укажите способ оплаты</label>
+            <div> <input type="text" class="input-medium bfh-phone"  placeholder="Картой или наличными"> </div>
+            <small class="form-text text-muted">От этого зависит, возьмут ли курьеры с собой нужную для карточек
+            технику или деньги для сдачи.</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Отправить</button>
+    </form>
+</div>
+
+{% endblock %}

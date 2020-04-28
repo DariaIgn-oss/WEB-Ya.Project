@@ -10,7 +10,10 @@ import news_api, news_resources
 from flask_restful import Api
 
 app = Flask(__name__)
+
+# защита от межсайтовой подделки запросов
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
+
 app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=365)
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -31,7 +34,9 @@ def load_user(user_id):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    # проверка на валидацию
     if form.validate_on_submit():
+        # следующие две строки: зачем?
         session = db_session.create_session()
         user = session.query(users.User).filter(users.User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
@@ -78,7 +83,7 @@ def index():
         news = session.query(products.Products).filter(products.Products.is_private == 0)
     return render_template("index.html", news=news)
 
-
+# здесь начинается нечто непонятно
 @app.route('/logout')
 @login_required
 def logout():
@@ -157,12 +162,18 @@ def courier():
     return render_template('courier.html')
 
 
+@app.route("/basket")
+def basket():
+    return render_template('basket.html')
+
+
 def main():
+    # вызов всего, что связано с базой данных
     db_session.global_init("db/blogs0.sqlite")
-    #app.register_blueprint(news_api.blueprint)
+    app.register_blueprint(news_api.blueprint)
     api.add_resource(news_resources.NewsListResource, '/api/v2/news')
     api.add_resource(news_resources.NewsResource, '/api/v2/news/<int:news_id>')
-    app.run()
+    app.run(port=8080, host='127.0.0.1')
 
 
 if __name__ == '__main__':
