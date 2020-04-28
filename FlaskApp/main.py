@@ -168,6 +168,7 @@ def basket():
 
 
 def main():
+    app.debug = True
     # вызов всего, что связано с базой данных
     db_session.global_init("db/blogs0.sqlite")
     app.register_blueprint(news_api.blueprint)
