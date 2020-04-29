@@ -83,6 +83,7 @@ def index():
         news = session.query(products.Products).filter(products.Products.is_private == 0)
     return render_template("index.html", news=news)
 
+
 # здесь начинается нечто непонятно
 @app.route('/logout')
 @login_required
@@ -91,7 +92,7 @@ def logout():
     return redirect("/product")
 
 
-@app.route('/news',  methods=['GET', 'POST'])
+@app.route('/news', methods=['GET', 'POST'])
 @login_required
 def add_news():
     form = NewsForm()
@@ -162,9 +163,24 @@ def courier():
     return render_template('courier.html')
 
 
-@app.route("/basket")
+@app.route("/basket", methods=['POST', 'GET'])
 def basket():
-    return render_template('basket.html')
+    if request.method == 'GET':
+        return render_template('basket.html')
+    elif request.method == 'POST':
+        print(request.form['name'])
+        print(request.form['surname'])
+        print(request.form['tel'])
+        print(request.form['address1'])
+        print(request.form['address2'])
+        print(request.form['order'])
+        print(request.form['payment'])
+        return "Форма отправлена"
+
+
+@app.route("/expectation")
+def expectation():
+    pass
 
 
 def main():
