@@ -158,11 +158,6 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-@app.route("/courier")
-def courier():
-    return render_template('courier.html')
-
-
 @app.route("/basket", methods=['POST', 'GET'])
 def basket():
     if request.method == 'GET':

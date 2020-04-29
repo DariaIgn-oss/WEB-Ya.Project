@@ -13,7 +13,7 @@
   <h2>Доступные продукты</h2>
 </div>
 <form action="" method="post">
-{% if current_user.is_authenticated %}
+{% if current_user.is_authenticated and current_user.about == '123' %}
     <a href="news" class="btn btn-secondary">Добавить продукт</a>
 {% endif %}
 {% for item in news%}
