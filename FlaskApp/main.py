@@ -175,12 +175,7 @@ def basket():
         print(request.form['address2'])
         print(request.form['order'])
         print(request.form['payment'])
-        return "Форма отправлена"
-
-
-@app.route("/expectation")
-def expectation():
-    pass
+        return render_template('expectation.html')
 
 
 def main():

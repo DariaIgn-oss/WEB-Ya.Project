@@ -28,7 +28,8 @@
         <div class="form-group">
             <label for="exampleInputEmail1">Теперь укажите адресс, по которому нужно доставить заказ</label>
             <div> <input type="text" class="input-medium bfh-phone" name ='address2' placeholder="Введите адресс"> </div>
-            <small class="form-text text-muted">Пожалуйста, не забудьте указать этаж и квартиру.</small>
+            <small class="form-text text-muted">Пожалуйста, не забудьте указать этаж и квартиру. И помните, что
+            доставки производятся только по Казани.</small>
         </div>
         <div class="form-group">
             <label for="about">Перечислите нужные вам продукты или же предпочтения к блюду, которое приготовит для вас
@@ -44,5 +45,7 @@
         <button type="submit" class="btn btn-primary">Записаться</button>
     </form>
 </div>
+
+{% block expectation %}{% endblock %}
 
 {% endblock %}
