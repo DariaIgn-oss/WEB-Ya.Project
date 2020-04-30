@@ -42,7 +42,7 @@ def login():
         user = session.query(users.User).filter(users.User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            return redirect("/product")
+            return redirect("/main")
         return render_template('login.html',
                                message="Неправильный логин или пароль",
                                form=form)
