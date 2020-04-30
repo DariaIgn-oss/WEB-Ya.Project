@@ -21,6 +21,7 @@ api = Api(app)
 
 
 @app.route("/")
+@app.route("/main")
 def head():
     return render_template('main.html')
 
@@ -73,23 +74,23 @@ def reqister():
     return render_template('register.html', title='Регистрация', form=form)
 
 
-@app.route("/product")
-def index():
-    session = db_session.create_session()
-    if current_user.is_authenticated:
-        news = session.query(products.Products).filter(
-            (products.Products.user == current_user) | (products.Products.is_private == 0))
-    else:
-        news = session.query(products.Products).filter(products.Products.is_private == 0)
-    return render_template("index.html", news=news)
+# @app.route("/product")
+# def index():
+#     session = db_session.create_session()
+#     if current_user.is_authenticated:
+#         news = session.query(products.Products).filter(
+#             (products.Products.user == current_user) | (products.Products.is_private == 0))
+#     else:
+#         news = session.query(products.Products).filter(products.Products.is_private == 0)
+#     return render_template("index.html", news=news)
 
 
-# здесь начинается нечто непонятно
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect("/product")
+    return redirect("/main")
+    # ранее был /product (закомменчен)
 
 
 @app.route('/news', methods=['GET', 'POST'])
@@ -153,11 +154,6 @@ def news_delete(id):
     return redirect('/product')
 
 
-@app.errorhandler(404)
-def not_found(error):
-    return make_response(jsonify({'error': 'Not found'}), 404)
-
-
 @app.route("/basket", methods=['POST', 'GET'])
 def basket():
     if request.method == 'GET':
@@ -171,6 +167,11 @@ def basket():
         print(request.form['order'])
         print(request.form['payment'])
         return render_template('expectation.html')
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
 
 
 def main():
