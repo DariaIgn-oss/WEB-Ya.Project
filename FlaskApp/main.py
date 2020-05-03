@@ -1,16 +1,16 @@
-from flask import Flask, make_response, request, redirect, render_template, jsonify
 from data import db_session
 from data import users
 from data import products
 from data import review
 from data import orders
 import datetime
+from flask import Flask, make_response, request, redirect, render_template, jsonify
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from loginform import LoginForm, RegisterForm, NewsForm, ReviewForm
 from werkzeug.exceptions import abort
 import news_resources
 from flask_restful import Api
-from check import check_order, const
+from check import check_order, const, check_True, intermediate_prices
 
 app = Flask(__name__)
 
@@ -40,7 +40,6 @@ def login():
     form = LoginForm()
     # проверка на валидацию
     if form.validate_on_submit():
-        # следующие две строки: зачем?
         session = db_session.create_session()
         user = session.query(users.User).filter(users.User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
@@ -161,7 +160,7 @@ def add_reviews():
     form = ReviewForm()
     if form.validate_on_submit():
         session = db_session.create_session()
-        news = review.Reviews
+        news = review.Reviews()
         news.title = form.title.data
         news.content = form.content.data
         current_user.review.append(news)
@@ -216,13 +215,26 @@ def reviews_delete(id):
 
 @app.route("/basket", methods=['POST', 'GET'])
 def basket():
+    global orders
     if request.method == 'GET':
         return render_template('basket.html')
     elif request.method == 'POST':
         args = [request.form['tel'], request.form['address1'],
-                    request.form['address2'], request.form['order'],
-                    request.form['payment']]
+                request.form['address2'], request.form['order'],
+                request.form['payment']]
         check_order(args)
+        if check_True(const):
+            print("Всё хорошо")
+            print(intermediate_prices)
+            # orders = orders.Orders()
+            # session = db_session.create_session()
+            # orders.tel = args[0]
+            # orders.addresses = '{}, {}'.format(args[1], args[2])
+            # orders.order = args[3]
+            # orders.payment = args[4]
+            # current_user.review.append(orders)
+            # session.merge(current_user)
+            # session.commit()
         return render_template('expectation.html', **const)
 
 

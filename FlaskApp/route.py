@@ -19,5 +19,5 @@ def price_per_path(address1, address2):
     coordinates1, coordinates2 = coordinates1.split(), coordinates2.split()
     len_path = sqrt((float(coordinates1[0]) - float(coordinates2[0])) ** 2 +
                 (float(coordinates1[1]) - float(coordinates2[1])) ** 2)
-    price = int((len_path / 0.0160200443) * 100)
+    price = int((len_path / 0.0160200443) * 5)
     return price
