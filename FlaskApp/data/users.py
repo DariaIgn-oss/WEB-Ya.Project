@@ -21,6 +21,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     created_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                      default=datetime.datetime.now)
     products = orm.relation("Products", back_populates='user')
+    review = orm.relation('Reviews', back_populates='user')
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)

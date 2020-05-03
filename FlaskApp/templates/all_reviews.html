@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  .fakeimg {
+      height: 200px;
+      background: #aaa;
+  }
+</style>
+
+<div class="jumbotron text-center" style="margin-bottom:0">
+  <h1>Крошки на ножках</h1>
+  <h2>Отзывы покупателей</h2>
+</div>
+<form action="" method="post">
+{% if current_user.is_authenticated and current_user.about != '123' %}
+    <a href="/review" class="btn btn-secondary">Добавить отзыв</a>
+{% endif %}
+{% for item in news%}
+<div class="col-md6 border rounded">
+    <h2>{{item.title}}</h2>
+    <div>
+        {{item.content}}
+    </div>
+    <div>
+        Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
+    </div>
+    {% if current_user.is_authenticated and current_user == item.user %}
+        <div>
+            <a href="/reviews/{{ item.id }}" class="btn btn-secondary">Изменить</a>
+            <a href="/reviews_delete/{{ item.id }}" class="btn btn-secondary">Удалить</a>
+        </div>
+    {% endif %}
+</div>
+{% endfor %}
+</form>
+{% endblock %}

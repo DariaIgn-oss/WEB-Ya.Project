@@ -2,12 +2,13 @@ from flask import Flask, make_response, request, redirect, render_template, json
 from data import db_session
 from data import users
 from data import products
+from data import review
 from data import orders
 import datetime
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from loginform import LoginForm, RegisterForm, NewsForm
+from loginform import LoginForm, RegisterForm, NewsForm, ReviewForm
 from werkzeug.exceptions import abort
-import news_api, news_resources
+import news_resources
 from flask_restful import Api
 from check import check_order, const
 
@@ -76,84 +77,141 @@ def reqister():
     return render_template('register.html', title='Регистрация', form=form)
 
 
-# @app.route("/product")
-# def index():
-#     session = db_session.create_session()
-#     if current_user.is_authenticated:
-#         news = session.query(products.Products).filter(
-#             (products.Products.user == current_user) | (products.Products.is_private == 0))
-#     else:
-#         news = session.query(products.Products).filter(products.Products.is_private == 0)
-#     return render_template("index.html", news=news)
-
-
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect("/main")
-    # ранее был /product (закомменчен)
 
 
-# @app.route('/news', methods=['GET', 'POST'])
-# @login_required
-# def add_news():
-#     form = NewsForm()
-#     if form.validate_on_submit():
-#         session = db_session.create_session()
-#         news = products.Products()
-#         news.title = form.title.data
-#         news.content = form.content.data
-#         news.is_private = form.is_private.data
-#         current_user.news.append(news)
-#         session.merge(current_user)
-#         session.commit()
-#         return redirect('/product')
-#     return render_template('products.html', title='Добавление продукта',
-#                            form=form)
+@app.route('/news', methods=['GET', 'POST'])
+@login_required
+def add_news():
+    form = NewsForm()
+    if form.validate_on_submit():
+        session = db_session.create_session()
+        news = products.Products()
+        news.title = form.title.data
+        news.content = form.content.data
+        news.is_private = form.is_private.data
+        current_user.news.append(news)
+        session.merge(current_user)
+        session.commit()
+        return redirect('/product')
+    return render_template('products.html', title='Добавление продукта',
+                           form=form)
 
 
-# @app.route('/news/<int:id>', methods=['GET', 'POST'])
-# @login_required
-# def edit_news(id):
-#     form = NewsForm()
-#     if request.method == "GET":
-#         session = db_session.create_session()
-#         news = session.query(products.Products).filter(products.Products.id == id,
-#                                                        products.Products.user == current_user).first()
-#         if news:
-#             form.title.data = news.title
-#             form.content.data = news.content
-#             form.is_private.data = news.is_private
-#         else:
-#             abort(404)
-#     if form.validate_on_submit():
-#         session = db_session.create_session()
-#         news = session.query(products.Products).filter(products.Products.id == id,
-#                                                        products.Products.user == current_user).first()
-#         if news:
-#             news.title = form.title.data
-#             news.content = form.content.data
-#             news.is_private = form.is_private.data
-#             session.commit()
-#             return redirect('/product')
-#         else:
-#             abort(404)
-#     return render_template('products.html', title='Редактирование товара', form=form)
+@app.route('/news/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_news(id):
+    form = NewsForm()
+    if request.method == "GET":
+        session = db_session.create_session()
+        news = session.query(products.Products).filter(products.Products.id == id,
+                                                       products.Products.user == current_user).first()
+        if news:
+            form.title.data = news.title
+            form.content.data = news.content
+            form.is_private.data = news.is_private
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        session = db_session.create_session()
+        news = session.query(products.Products).filter(products.Products.id == id,
+                                                       products.Products.user == current_user).first()
+        if news:
+            news.title = form.title.data
+            news.content = form.content.data
+            news.is_private = form.is_private.data
+            session.commit()
+            return redirect('/product')
+        else:
+            abort(404)
+    return render_template('products.html', title='Редактирование товара', form=form)
 
 
-# @app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
-# @login_required
-# def news_delete(id):
-#     session = db_session.create_session()
-#     news = session.query(products.Products).filter(products.Products.id == id,
-#                                                    products.Products.user == current_user).first()
-#     if news:
-#         session.delete(news)
-#         session.commit()
-#     else:
-#         abort(404)
-#     return redirect('/product')
+@app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def news_delete(id):
+    session = db_session.create_session()
+    news = session.query(products.Products).filter(products.Products.id == id,
+                                                   products.Products.user == current_user).first()
+    if news:
+        session.delete(news)
+        session.commit()
+    else:
+        abort(404)
+    return redirect('/product')
+
+
+@app.route("/reviews")
+def all_reviews():
+    session = db_session.create_session()
+    if current_user.is_authenticated:
+        news = session.query(review.Reviews).filter(review.Reviews.user == current_user)
+    else:
+        news = session.query(review.Reviews)
+    return render_template("all_reviews.html", news=news)
+
+
+@app.route('/review', methods=['GET', 'POST'])
+@login_required
+def add_reviews():
+    form = ReviewForm()
+    if form.validate_on_submit():
+        session = db_session.create_session()
+        news = review.Reviews
+        news.title = form.title.data
+        news.content = form.content.data
+        current_user.review.append(news)
+        session.merge(current_user)
+        session.commit()
+        return redirect('/reviews')
+    return render_template('review.html', title='Добавление отзыва',
+                           form=form)
+
+
+@app.route('/reviews/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_reviews(id):
+    form = ReviewForm()
+    if request.method == "GET":
+        session = db_session.create_session()
+        news = session.query(review.Reviews).filter(review.Reviews.id == id,
+                                                    review.Reviews.user == current_user).first()
+        if news:
+            form.title.data = news.title
+            form.content.data = news.content
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        session = db_session.create_session()
+        news = session.query(review.Reviews).filter(review.Reviews.id == id,
+                                                    review.Reviews.user == current_user).first()
+        if news:
+            news.title = form.title.data
+            news.content = form.content.data
+            news.is_private = form.is_private.data
+            session.commit()
+            return redirect('/reviews')
+        else:
+            abort(404)
+    return render_template('review.html', title='Редактирование отзыва', form=form)
+
+
+@app.route('/reviews_delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def reviews_delete(id):
+    session = db_session.create_session()
+    news = session.query(review.Reviews).filter(review.Reviews.id == id,
+                                                review.Reviews.user == current_user).first()
+    if news:
+        session.delete(news)
+        session.commit()
+    else:
+        abort(404)
+    return redirect('/rewiews')
 
 
 @app.route("/basket", methods=['POST', 'GET'])
@@ -176,7 +234,6 @@ def main():
     app.debug = True
     # вызов всего, что связано с базой данных
     db_session.global_init("db/blogs0.sqlite")
-    # app.register_blueprint(news_api.blueprint)
     api.add_resource(news_resources.NewsListResource, '/api/v2/news')
     api.add_resource(news_resources.NewsResource, '/api/v2/news/<int:news_id>')
     app.run(port=8080, host='127.0.0.1')

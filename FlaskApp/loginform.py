@@ -25,3 +25,9 @@ class NewsForm(FlaskForm):
     content = TextAreaField("Магазин и стоимость")
     is_private = BooleanField("Для себя")
     submit = SubmitField('Применить')
+
+
+class ReviewForm(FlaskForm):
+    title = StringField('Оценка из 10', validators=[DataRequired()])
+    content = TextAreaField("Ваш отзыв")
+    submit = SubmitField('Отправить')
