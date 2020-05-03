@@ -219,9 +219,10 @@ def basket():
     if request.method == 'GET':
         return render_template('basket.html')
     elif request.method == 'POST':
-        check_order(request.form['tel'], request.form['address1'],
+        args = [request.form['tel'], request.form['address1'],
                     request.form['address2'], request.form['order'],
-                    request.form['payment'])
+                    request.form['payment']]
+        check_order(args)
         return render_template('expectation.html', **const)
 
 
