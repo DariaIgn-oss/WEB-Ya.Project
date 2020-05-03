@@ -1,33 +1,32 @@
-from route.py import price_per_path
+from route import price_per_path
 
-class FormatError(Exception):
-    pass
-
-
-class FormatSurNameError(FormatError):
-    pass
-
-
-class FormatNumberError(FormatError):
-    pass
-
-
-class FormatAddressError(FormatError):
-    pass
+const = {'tel': True, 'path': True, 'order': True, 'payment': True}
 
 
 def check_number(number):
     number = number.replace(' ', '')
-    if not number.isdigit() or number[0] != 8 or len(number) != 11:
-        return False
-    else:
-        return True
-
-def check(*args):
-    try:
-        if not args[0] and not args[1]:
-            raise FormatSurNameError('Вы не указали ни имени, ни фамилии! Мы не знаем, как к вам обращаться!')
-        elif not check_number(args[2]):
-            raise FormatNumberError('Номер недействителен!')
+    if number:
+        if number.isdigit():
+            if number[0] == '8':
+                if len(number) == 11:
+                    return True
+    return False
 
 
+def check_order(*args):
+    if not check_number(args[0]):
+        const['tel'] = False
+    if args[-1].lower() != 'картой':
+        if args[-1].lower() != 'наличными':
+            const['payment'] = False
+
+    message = args[-2].split('\n')
+    for i in range(len(message)):
+        message[i] = message[i].replace('\r', '')
+    if not message:
+        if len(message) < 2:
+            if message[0] != '1' or message[0] != '2':
+                const['order'] = False
+
+    if not price_per_path(args[-4], args[-3]):
+        const['path'] = False

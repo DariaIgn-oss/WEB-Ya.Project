@@ -5,10 +5,6 @@
 <h1 align="center">Займёмся заказиком?</h1>
 <div>
     <form class="basket_form" method="post">
-        <div>
-            <input type="name" class="form-control" id="name" placeholder="Введите имя" name="name">
-            <input type="surname" class="form-control" id="surname" placeholder="Введите фамилию" name="surname">
-        </div>
         <div class="form-group">
             <label for="exampleInputEmail1">Введите номер телефона по примеру: 8 *** *** * ***</label>
             <div> <input type="tel" class="input-medium bfh-phone" placeholder="Введите телефон" name="tel"> </div>
@@ -32,8 +28,11 @@
             доставки производятся только по Казани.</small>
         </div>
         <div class="form-group">
-            <label for="about">Перечислите нужные вам продукты или же предпочтения к блюду, которое приготовит для вас
+            <label for="about">Перечислите нужные вам продукты, поставив цифру 1 на первой строке,
+                или же поставьте цифру 2 на первой строке и перечислите предпочтения к блюду, которое приготовит для вас
                 курьер (примерную цену всех ингридиентов, вкусовые предпочтения)</label>
+            <small class="form-text text-muted">Просьба перечислять продукты каждый на новой строке, а
+            количество указывать через двоеточие, например: молоко: 2; </small>
             <textarea class="form-control" id="about" rows="3" name="order"></textarea>
         </div>
         <div class="form-group">
@@ -42,7 +41,7 @@
             <small class="form-text text-muted">От этого зависит, возьмут ли курьеры с собой нужную для карточек
             технику или деньги для сдачи.</small>
         </div>
-        <button type="submit" class="btn btn-primary">Записаться</button>
+        <button type="submit" class="btn btn-primary">Сделать заказ!</button>
     </form>
 </div>
 
