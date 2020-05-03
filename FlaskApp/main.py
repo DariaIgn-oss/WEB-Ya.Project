@@ -164,12 +164,6 @@ def basket():
         check_order(request.form['tel'], request.form['address1'],
                     request.form['address2'], request.form['order'],
                     request.form['payment'])
-        orders = orders.Order(tel=request.form['tel'],
-                       addresses=f"{request.form['address1']}, {request.form['address2']}",
-                       order_op=request.form['order'], payment=request.form['payment'])
-        session.add(orders)
-        session.commit()
-
         return render_template('expectation.html', **const)
 
 

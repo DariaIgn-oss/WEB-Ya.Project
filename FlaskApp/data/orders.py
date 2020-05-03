@@ -5,7 +5,7 @@ from sqlalchemy import orm
 from .db_session import SqlAlchemyBase
 
 
-class Products(SqlAlchemyBase):
+class Orders(SqlAlchemyBase):
     __tablename__ = 'orders'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
