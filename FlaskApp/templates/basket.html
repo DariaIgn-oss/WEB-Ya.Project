@@ -1,8 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-<h1 align="center">Займёмся заказиком?</h1>
+<style>
+  .fakeimg {
+      height: 200px;
+      background: #aaa;
+  }
+</style>
+<div class="jumbotron text-center" style="margin-bottom:0">
+  <h1>Крошки на ножках</h1>
+  <h2>Займёмся заказиком?</h2>
+</div>
 <div>
     <form class="basket_form" method="post">
         <div class="form-group">
@@ -41,7 +49,7 @@
             <small class="form-text text-muted">От этого зависит, возьмут ли курьеры с собой нужную для карточек
             технику или деньги для сдачи.</small>
         </div>
-        <button type="submit" class="btn btn-primary">Сделать заказ!</button>
+        <button type="submit" class="btn btn-secondary">Сделать заказ!</button>
     </form>
 </div>
 

@@ -12,6 +12,8 @@ import news_resources
 from flask_restful import Api
 from check import check_order, const, check_True, intermediate_prices
 
+courier_password = str(open('courier_password', 'r').read())
+
 app = Flask(__name__)
 
 # защита от межсайтовой подделки запросов
@@ -26,7 +28,7 @@ api = Api(app)
 @app.route("/")
 @app.route("/main")
 def head():
-    return render_template('main.html')
+    return render_template('main.html', courier_password=courier_password)
 
 
 @login_manager.user_loader
@@ -83,56 +85,85 @@ def logout():
     return redirect("/main")
 
 
-@app.route('/news', methods=['GET', 'POST'])
-@login_required
-def add_news():
-    form = NewsForm()
-    if form.validate_on_submit():
+def all_news(type):
+    session = db_session.create_session()
+    if type == 'products':
+        news = session.query(products.Products)
+    else:
+        news = session.query(review.Reviews)
+    return news
+
+
+def add_news(type):
+    if type == 'product':
+        form = NewsForm()
+    else:
+        form = ReviewForm
+    if form.validate_on_submit() and (current_user.about == courier_password or type == 'review'):
         session = db_session.create_session()
         news = products.Products()
+        if type == 'review':
+            news = review.Reviews()
         news.title = form.title.data
         news.content = form.content.data
-        news.is_private = form.is_private.data
-        current_user.news.append(news)
+        if type == 'product':
+            current_user.products.append(news)
+        else:
+            current_user.review.append(news)
         session.merge(current_user)
         session.commit()
-        return redirect('/product')
-    return render_template('products.html', title='Добавление продукта',
-                           form=form)
+        if type == 'product':
+            return redirect('/products')
+        else:
+            return redirect('/reviews')
 
 
-@app.route('/news/<int:id>', methods=['GET', 'POST'])
+@app.route("/products")
+def all_products():
+    if current_user.is_authenticated:
+        return render_template("all_news.html", news=all_news('products'), page="Продукты",
+                               type="Добавление продукта", courier_password=courier_password)
+
+
+@app.route('/product', methods=['GET', 'POST'])
 @login_required
-def edit_news(id):
+def add_products():
+    form = NewsForm()
+    add_news('product')
+    return render_template('news.html', form=form, page='Добавление продукта',
+                           courier_password=courier_password)
+
+
+@app.route('/products_delete/<int:id>', methods=['GET', 'POST'])
+@app.route('/products/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_products(id):
     form = NewsForm()
     if request.method == "GET":
         session = db_session.create_session()
-        news = session.query(products.Products).filter(products.Products.id == id,
-                                                       products.Products.user == current_user).first()
+        news = session.query(products.Products)
         if news:
             form.title.data = news.title
             form.content.data = news.content
-            form.is_private.data = news.is_private
         else:
             abort(404)
-    if form.validate_on_submit():
+    elif form.validate_on_submit():
         session = db_session.create_session()
-        news = session.query(products.Products).filter(products.Products.id == id,
-                                                       products.Products.user == current_user).first()
+        news = session.query(products.Products)
         if news:
             news.title = form.title.data
             news.content = form.content.data
-            news.is_private = form.is_private.data
             session.commit()
             return redirect('/product')
         else:
             abort(404)
-    return render_template('products.html', title='Редактирование товара', form=form)
+    return render_template('news.html', page='Редактирование товара', form=form,
+                           courier_password=courier_password)
 
 
-@app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
+@app.route('/products_delete/<int:id>', methods=['GET', 'POST'])
 @login_required
-def news_delete(id):
+def products_delete(id):
     session = db_session.create_session()
     news = session.query(products.Products).filter(products.Products.id == id,
                                                    products.Products.user == current_user).first()
@@ -146,29 +177,17 @@ def news_delete(id):
 
 @app.route("/reviews")
 def all_reviews():
-    session = db_session.create_session()
-    if current_user.is_authenticated:
-        news = session.query(review.Reviews).filter(review.Reviews.user == current_user)
-    else:
-        news = session.query(review.Reviews)
-    return render_template("all_reviews.html", news=news)
+    return render_template("all_news.html", news=all_news('reviews'), page="Отзывы",
+                           type="Добавление отзыва", courier_password=courier_password)
 
 
 @app.route('/review', methods=['GET', 'POST'])
 @login_required
 def add_reviews():
     form = ReviewForm()
-    if form.validate_on_submit():
-        session = db_session.create_session()
-        news = review.Reviews()
-        news.title = form.title.data
-        news.content = form.content.data
-        current_user.review.append(news)
-        session.merge(current_user)
-        session.commit()
-        return redirect('/reviews')
-    return render_template('review.html', title='Добавление отзыва',
-                           form=form)
+    add_news('review')
+    return render_template('news.html', page='Добавление отзыва', form=form,
+                           courier_password=courier_password)
 
 
 @app.route('/reviews/<int:id>', methods=['GET', 'POST'])
@@ -191,12 +210,12 @@ def edit_reviews(id):
         if news:
             news.title = form.title.data
             news.content = form.content.data
-            news.is_private = form.is_private.data
             session.commit()
             return redirect('/reviews')
         else:
             abort(404)
-    return render_template('review.html', title='Редактирование отзыва', form=form)
+    return render_template('news.html', page='Редактирование отзыва', form=form,
+                           courier_password=courier_password)
 
 
 @app.route('/reviews_delete/<int:id>', methods=['GET', 'POST'])
@@ -226,16 +245,7 @@ def basket():
         if check_True(const):
             print("Всё хорошо")
             print(intermediate_prices)
-            # orders = orders.Orders()
-            # session = db_session.create_session()
-            # orders.tel = args[0]
-            # orders.addresses = '{}, {}'.format(args[1], args[2])
-            # orders.order = args[3]
-            # orders.payment = args[4]
-            # current_user.review.append(orders)
-            # session.merge(current_user)
-            # session.commit()
-        return render_template('expectation.html', **const)
+        return render_template('expectation.html', **const, courier_password=courier_password)
 
 
 @app.errorhandler(404)

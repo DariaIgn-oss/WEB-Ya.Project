@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  .fakeimg {
+      height: 200px;
+      background: #aaa;
+  }
+</style>
+
+<div class="jumbotron text-center" style="margin-bottom:0">
+  <h1>Крошки на ножках</h1>
+  <h2>{{page}}</h2>
+</div>
+<form action="" method="post">
+{% if current_user.is_authenticated and current_user.about != courier_password and
+    page == 'Отзывы' %}
+    <a href="/review" class="btn btn-secondary">{{type}}</a>
+{% elif current_user.is_authenticated and current_user.about == courier_password and
+    page == 'Продукты' %}
+    <a href="/product" class="btn btn-secondary">{{type}}</a>
+{% endif %}
+{% for item in news%}
+<div class="col-md6 border rounded">
+    {% if page=='Отзывы' %}
+    <h2>{{item.title}}/10</h2>
+    <h3>{{item.content}}</h3>
+    {% else %}
+    <h2>{{item.title}}</h2>
+    <div>{{item.content}}</div>
+    {% endif %}
+    <div>
+        Автор - {{item.user.name}}, Дата написания - {{item.created_date}}
+    </div>
+    {% if page == 'Отзывы' and current_user.is_authenticated and current_user == item.user %}
+        <div>
+            <a href="/reviews/{{ item.id }}" class="btn btn-secondary">Изменить</a>
+            <a href="/reviews_delete/{{ item.id }}" class="btn btn-secondary">Удалить</a>
+        </div>
+    {% elif page == 'Продукты' and current_user.is_authenticated and current_user == item.user %}
+        <div>
+            <a href="/products/{{ item.id }}" class="btn btn-secondary">Изменить</a>
+            <a href="/products_delete/{{ item.id }}" class="btn btn-secondary">Удалить</a>
+        </div>
+    {% endif %}
+</div>
+{% endfor %}
+</form>
+{% endblock %}

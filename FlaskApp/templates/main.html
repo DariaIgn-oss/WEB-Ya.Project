@@ -23,7 +23,7 @@
   <div> Привет! Пожалуйста, зарегистрируйтесь или войдите в систему, </div>
   <div> чтобы иметь возможность пользоваться нашими услугами! </div>
 </div>
-{% elif current_user.is_authenticated and current_user.about != '123' %}
+{% elif current_user.is_authenticated and current_user.about != courier_password %}
 <div class="jumbotron text-center" style="margin-bottom:0">
   <div> Вас приветствует компания доставки "Крошки на ножках"! </div>
   <div> Мы доставляем продукты из магазинов "Эдельвейс" по всей Казани! </div>

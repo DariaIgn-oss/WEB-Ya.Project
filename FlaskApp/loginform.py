@@ -23,7 +23,6 @@ class RegisterForm(FlaskForm):
 class NewsForm(FlaskForm):
     title = StringField('Товар', validators=[DataRequired()])
     content = TextAreaField("Магазин и стоимость")
-    is_private = BooleanField("Для себя")
     submit = SubmitField('Применить')
 
 
