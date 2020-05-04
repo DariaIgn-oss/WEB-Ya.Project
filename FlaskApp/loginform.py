@@ -1,9 +1,10 @@
 from flask_wtf import FlaskForm
 from wtforms import PasswordField, BooleanField, SubmitField, StringField, TextAreaField
+from wtforms import IntegerField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired
 
-# классы форм
+
 class LoginForm(FlaskForm):
     email = EmailField('Введите почту', validators=[DataRequired()])
     password = PasswordField('Введите пароль', validators=[DataRequired()])
@@ -22,7 +23,8 @@ class RegisterForm(FlaskForm):
 
 class NewsForm(FlaskForm):
     title = StringField('Товар', validators=[DataRequired()])
-    content = TextAreaField("Магазин и стоимость")
+    prices = IntegerField("Стоимость")
+    content = TextAreaField("Описание")
     submit = SubmitField('Применить')
 
 

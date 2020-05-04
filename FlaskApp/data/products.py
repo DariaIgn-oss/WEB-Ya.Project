@@ -10,9 +10,9 @@ class Products(SqlAlchemyBase):
 
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
-    title = sqlalchemy.Column(sqlalchemy.String, nullable=False)
-    prices = sqlalchemy.Column(sqlalchemy.Integer, nullable=False)
-    content = sqlalchemy.Column(sqlalchemy.String, nullable=False)
+    title = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    prices = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
+    content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                      default=datetime.datetime.now)
 

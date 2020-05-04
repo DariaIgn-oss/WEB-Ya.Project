@@ -95,11 +95,10 @@ def all_news(type):
 
 
 def add_news(type):
-    if type == 'product':
-        form = NewsForm()
-    else:
-        form = ReviewForm
-    if form.validate_on_submit() and (current_user.about == courier_password or type == 'review'):
+    form = NewsForm()
+    if type == 'review':
+        form = ReviewForm()
+    if form.validate_on_submit():
         session = db_session.create_session()
         news = products.Products()
         if type == 'review':
@@ -107,15 +106,12 @@ def add_news(type):
         news.title = form.title.data
         news.content = form.content.data
         if type == 'product':
+            news.prices = form.prices.data
             current_user.products.append(news)
         else:
             current_user.review.append(news)
         session.merge(current_user)
         session.commit()
-        if type == 'product':
-            return redirect('/products')
-        else:
-            return redirect('/reviews')
 
 
 @app.route("/products")
@@ -130,11 +126,12 @@ def all_products():
 def add_products():
     form = NewsForm()
     add_news('product')
+    if form.validate_on_submit():
+        return redirect('/products')
     return render_template('news.html', form=form, page='Добавление продукта',
                            courier_password=courier_password)
 
 
-@app.route('/products_delete/<int:id>', methods=['GET', 'POST'])
 @app.route('/products/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_products(id):
@@ -186,6 +183,8 @@ def all_reviews():
 def add_reviews():
     form = ReviewForm()
     add_news('review')
+    if form.validate_on_submit():
+        return redirect('/reviews')
     return render_template('news.html', page='Добавление отзыва', form=form,
                            courier_password=courier_password)
 
@@ -229,10 +228,10 @@ def reviews_delete(id):
         session.commit()
     else:
         abort(404)
-    return redirect('/rewiews')
+    return redirect('/reviews')
 
 
-@app.route("/basket", methods=['POST', 'GET'])
+'''@app.route("/basket", methods=['POST', 'GET'])
 def basket():
     global orders
     if request.method == 'GET':
@@ -245,7 +244,7 @@ def basket():
         if check_True(const):
             print("Всё хорошо")
             print(intermediate_prices)
-        return render_template('expectation.html', **const, courier_password=courier_password)
+        return render_template('expectation.html', **const, courier_password=courier_password)'''
 
 
 @app.errorhandler(404)
