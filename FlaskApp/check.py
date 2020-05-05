@@ -39,7 +39,7 @@ def check_order(args):
 def check_True(lst):
     global const
     for key in lst.keys():
-        if lst[key] is not True:
+        if (lst[key] is not True and key != 'price') and lst['price'] != 0:
             const = {'tel': True, 'path': True, 'order': True, 'payment': True, 'price': 0}
             return False
     return True

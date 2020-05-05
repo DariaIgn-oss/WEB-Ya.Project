@@ -241,6 +241,19 @@ def basket():
                 request.form['address2'], request.form['order'],
                 request.form['payment']]
         check_order(args)
+        print(check_True(const))
+        if check_True(const):
+            print('Всё хорошо')
+            session = db_session.create_session()
+            order = orders.Orders(
+                tel=args[0],
+                addresses=f"{args[1]}, {args[2]}",
+                order=args[3],
+                payment=args[4],
+                price=const['price']
+            )
+            session.add(order)
+            session.commit()
         return render_template('expectation.html', **const, courier_password=courier_password)
 
 
