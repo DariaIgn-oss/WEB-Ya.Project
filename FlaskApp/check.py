@@ -1,8 +1,7 @@
 from route import price_per_path
 from price import price_products
 
-const = {'tel': True, 'path': True, 'order': True, 'payment': True}
-intermediate_prices = []
+const = {'tel': True, 'path': True, 'order': True, 'payment': True, 'price': 0}
 
 
 def check_number(number):
@@ -26,7 +25,7 @@ def check_order(args):
     for i in range(len(message)):
         message[i] = message[i].replace('\r', '')
     if message and len(message) > 1 and message[0] == '1' or message[0] == '2':
-        intermediate_prices.append(price_products(message))
+        const['price'] = price_products(message)
     else:
         const['order'] = False
 
@@ -34,14 +33,13 @@ def check_order(args):
     if not price_path:
         const['path'] = False
     else:
-        intermediate_prices.append(price_path)
+        const['price'] += price_path
 
 
 def check_True(lst):
     global const
     for key in lst.keys():
         if lst[key] is not True:
-            const = {'tel': True, 'path': True, 'order': True, 'payment': True}
-            intermediate_prices.clear()
+            const = {'tel': True, 'path': True, 'order': True, 'payment': True, 'price': 0}
             return False
     return True

@@ -10,7 +10,7 @@ from loginform import LoginForm, RegisterForm, NewsForm, ReviewForm
 from werkzeug.exceptions import abort
 import news_resources
 from flask_restful import Api
-from check import check_order, const, check_True, intermediate_prices
+from check import check_order, const, check_True
 
 courier_password = str(open('courier_password', 'r').read())
 
@@ -231,9 +231,9 @@ def reviews_delete(id):
     return redirect('/reviews')
 
 
-'''@app.route("/basket", methods=['POST', 'GET'])
+@app.route("/basket", methods=['POST', 'GET'])
 def basket():
-    global orders
+    global intermediate_prices
     if request.method == 'GET':
         return render_template('basket.html')
     elif request.method == 'POST':
@@ -241,10 +241,7 @@ def basket():
                 request.form['address2'], request.form['order'],
                 request.form['payment']]
         check_order(args)
-        if check_True(const):
-            print("Всё хорошо")
-            print(intermediate_prices)
-        return render_template('expectation.html', **const, courier_password=courier_password)'''
+        return render_template('expectation.html', **const, courier_password=courier_password)
 
 
 @app.errorhandler(404)
