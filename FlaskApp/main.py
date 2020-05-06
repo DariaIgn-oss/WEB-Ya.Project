@@ -162,8 +162,7 @@ def edit_products(id):
 @login_required
 def products_delete(id):
     session = db_session.create_session()
-    news = session.query(products.Products).filter(products.Products.id == id,
-                                                   products.Products.user == current_user).first()
+    news = session.query(products.Products).filter(products.Products.id == id).first()
     if news:
         session.delete(news)
         session.commit()
